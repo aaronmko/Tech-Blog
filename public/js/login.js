@@ -1,33 +1,30 @@
-async function editFormHandler(event) {
-    event.preventDefault();
+import { makeRequest } from './helpers.js';
 
-    const title = document.querySelector('input[name="post-title"]').value.trim();
-    const content = document.querySelector('input[name="content"]').value.trim();
-    console.log(title);
-    console.log(content);
+const loginForm = document.querySelector('#login-form');
 
-    const id = window.location.toString().split('/')[
-      window.location.toString().split('/').length - 1
-    ];
-      
-      const response = await fetch(`/api/posts/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          post_id: id,
-          title,
-          content
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+const handleLogin = async (event) => {
+  event.preventDefault();
+
+  const name = document.querySelector('#name').value;
+  const password = document.querySelector('#password').value;
+  if (name && password) {
+    try {
+      const data = await makeRequest('/api/users/login', 'POST', {
+        name,
+        password,
       });
-      
-      if (response.ok) {
-        document.location.replace('/dashboard/');
+      if (data.success) {
+        window.location.replace('/dashboard');
       } else {
-        alert(response.statusText);
+        console.log('Failed to login');
+        window.location.replace('/login');
       }
+    } catch (error) {
+      console.log('Failed to login', error);
+    }
+  } else {
+    console.log('Failed to login');
+  }
+};
 
-}
-
-document.querySelector('.edit-post-form').addEventListener('submit', editFormHandler);
+loginForm.addEventListener('submit', handleLogin);
