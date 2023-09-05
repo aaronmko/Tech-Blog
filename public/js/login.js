@@ -1,30 +1,29 @@
-import { makeRequest } from './helpers.js';
+//  login submission 
 
-const loginForm = document.querySelector('#login-form');
 
-const handleLogin = async (event) => {
+async function loginFormHandler(event) {
   event.preventDefault();
 
-  const name = document.querySelector('#name').value;
-  const password = document.querySelector('#password').value;
-  if (name && password) {
-    try {
-      const data = await makeRequest('/api/users/login', 'POST', {
-        name,
-        password,
-      });
-      if (data.success) {
-        window.location.replace('/dashboard');
-      } else {
-        console.log('Failed to login');
-        window.location.replace('/login');
-      }
-    } catch (error) {
-      console.log('Failed to login', error);
-    }
-  } else {
-    console.log('Failed to login');
-  }
-};
+  const username = document.querySelector('#username-login').value.trim();
+  const password = document.querySelector('#password-login').value.trim();
 
-loginForm.addEventListener('submit', handleLogin);
+  if (username && password) {
+    const response = await fetch('/api/users/login', {
+      method: 'post',
+      body: JSON.stringify({
+        username,
+        password
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (response.ok) {
+      document.location.replace('/dashboard');
+    } else {
+      alert(response.statusText);
+    }
+  }
+}
+
+
+document.querySelector('#login-form').addEventListener('submit', loginFormHandler);

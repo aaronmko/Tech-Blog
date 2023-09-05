@@ -1,15 +1,14 @@
-const logoutNavItem = document.querySelector('#log-out');
-
-const handleLogout = async () => {
+async function logout() {
   const response = await fetch('/api/users/logout', {
-    method: 'POST',
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' }
   });
 
   if (response.ok) {
-    window.location.replace('/login');
+    document.location.replace('/');
   } else {
-    alert('Failed to logout');
+    alert(response.statusText);
   }
-};
+}
 
-logoutNavItem.addEventListener('click', handleLogout);
+document.querySelector('#logout').addEventListener('click', logout);
